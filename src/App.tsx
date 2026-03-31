@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from "motion/react";
 interface Task {
   id: string;
   title: string;
-  priority: "low" | "medium" | "high";
+  priority?: "low" | "medium" | "high";
   status: "pending" | "completed";
 }
 

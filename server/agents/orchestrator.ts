@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { productivityTools } from "../tools/productivity.ts";
+import { ProductivityData, Task, Event, Note } from "../db/index.ts";
 
 export class OrchestratorAgent {
   private ai: GoogleGenAI;
@@ -8,7 +9,7 @@ export class OrchestratorAgent {
     this.ai = new GoogleGenAI({ apiKey });
   }
 
-  async processRequest(message: string, currentData: any) {
+  async processRequest(message: string, currentData: ProductivityData) {
     try {
       const response = await this.ai.models.generateContent({
         model: "gemini-3-flash-preview",
@@ -28,18 +29,18 @@ export class OrchestratorAgent {
 
         for (const call of functionCalls) {
           if (call.name === "add_task") {
-            const args = call.args as { title: string; priority?: string };
-            const task = { id: Date.now().toString(), ...args, status: "pending" };
+            const args = call.args as { title: string; priority?: "low" | "medium" | "high" };
+            const task: Task = { id: Date.now().toString(), ...args, status: "pending" };
             updatedData.tasks.push(task);
             toolResults.push({ name: call.name, content: `Task added: ${task.title}` });
           } else if (call.name === "add_event") {
             const args = call.args as { title: string; startTime: string; endTime?: string };
-            const event = { id: Date.now().toString(), ...args };
+            const event: Event = { id: Date.now().toString(), ...args };
             updatedData.events.push(event);
             toolResults.push({ name: call.name, content: `Event scheduled: ${event.title}` });
           } else if (call.name === "add_note") {
             const args = call.args as { content: string; tags?: string[] };
-            const note = { id: Date.now().toString(), ...args, createdAt: new Date().toISOString() };
+            const note: Note = { id: Date.now().toString(), ...args, createdAt: new Date().toISOString() };
             updatedData.notes.push(note);
             toolResults.push({ name: call.name, content: `Note saved.` });
           } else if (call.name === "get_productivity_data") {
