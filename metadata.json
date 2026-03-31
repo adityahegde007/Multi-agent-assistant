@@ -1,0 +1,5 @@
+{
+  "name": "Multi-Agent Productivity Assistant",
+  "description": "A multi-agent AI system for managing tasks, schedules, and notes with tool coordination.",
+  "requestFramePermissions": []
+}
