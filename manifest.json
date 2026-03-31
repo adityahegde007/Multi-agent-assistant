@@ -1,0 +1,25 @@
+{
+  "agent_id": "agentflow-orchestrator",
+  "name": "AgentFlow Orchestrator",
+  "description": "A multi-agent system for managing tasks, schedules, and information.",
+  "version": "1.0.0",
+  "capabilities": [
+    "task_management",
+    "calendar_scheduling",
+    "information_storage",
+    "semantic_search"
+  ],
+  "mcp_tools": [
+    "add_task",
+    "add_event",
+    "add_note",
+    "semantic_search_notes",
+    "get_productivity_data"
+  ],
+  "a2a_ready": true,
+  "endpoints": {
+    "chat": "/api/chat",
+    "health": "/api/health",
+    "manifest": "/manifest.json"
+  }
+}
