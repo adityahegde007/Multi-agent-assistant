@@ -16,34 +16,14 @@ import {
   Terminal
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { OrchestratorAgent, ProductivityData } from "./agent/orchestrator.ts";
-
-interface Task {
-  id: string;
-  title: string;
-  priority?: "low" | "medium" | "high";
-  status: "pending" | "completed";
-}
-
-interface Event {
-  id: string;
-  title: string;
-  startTime: string;
-  endTime?: string;
-}
-
-interface Note {
-  id: string;
-  content: string;
-  tags?: string[];
-  createdAt: string;
-}
-
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-  trace?: { agent: string; tool: string; args: any; result: string }[];
-}
+import { OrchestratorAgent } from "./agent/orchestrator.ts";
+import { 
+  Task, 
+  Event, 
+  Note, 
+  ProductivityData, 
+  ChatMessage 
+} from "../shared/types.ts";
 
 export default function App() {
   const [data, setData] = useState<ProductivityData>({ tasks: [], events: [], notes: [] });
@@ -116,6 +96,46 @@ export default function App() {
     } catch (err) {
       console.error("Failed to clear data:", err);
     }
+  };
+
+  const handleDeleteTask = async (id: string) => {
+    try {
+      const res = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setData(prev => ({ ...prev, tasks: prev.tasks.filter(t => t.id !== id) }));
+      }
+    } catch (err) {
+      console.error("Failed to delete task:", err);
+    }
+  };
+
+  const handleDeleteEvent = async (id: string) => {
+    try {
+      const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setData(prev => ({ ...prev, events: prev.events.filter(e => e.id !== id) }));
+      }
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+    }
+  };
+
+  const handleDeleteNote = async (id: string) => {
+    try {
+      const res = await fetch(`/api/notes/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setData(prev => ({ ...prev, notes: prev.notes.filter(n => n.id !== id) }));
+      }
+    } catch (err) {
+      console.error("Failed to delete note:", err);
+    }
+  };
+
+  const handleToggleTask = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      tasks: prev.tasks.map(t => t.id === id ? { ...t, status: t.status === "completed" ? "pending" : "completed" } : t)
+    }));
   };
 
   return (
@@ -268,15 +288,25 @@ export default function App() {
                   </div>
                   <div className="divide-y divide-slate-50">
                     {data.tasks.slice(-5).reverse().map(task => (
-                      <div key={task.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                      <div key={task.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
                         <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${
-                            task.priority === 'high' ? 'bg-rose-500' : 
-                            task.priority === 'medium' ? 'bg-amber-500' : 'bg-indigo-500'
-                          }`}></div>
-                          <span className="font-medium">{task.title}</span>
+                          <button 
+                            onClick={() => handleToggleTask(task.id)}
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${task.status === "completed" ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-300 hover:border-indigo-500"}`}
+                          >
+                            {task.status === "completed" && <CheckSquare size={10} />}
+                          </button>
+                          <span className={`font-medium ${task.status === "completed" ? "text-slate-400 line-through" : "text-slate-700"}`}>{task.title}</span>
                         </div>
-                        <span className="text-xs font-mono text-slate-400 uppercase">{task.priority}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-mono text-slate-400 uppercase">{task.priority}</span>
+                          <button 
+                            onClick={() => handleDeleteTask(task.id)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-rose-500 transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                     {data.tasks.length === 0 && (
@@ -293,15 +323,23 @@ export default function App() {
                     {data.events.slice(0, 3).map(event => {
                       const date = new Date(event.startTime);
                       return (
-                        <div key={event.id} className="flex gap-3">
-                          <div className="flex-shrink-0 w-10 h-10 bg-slate-100 rounded-lg flex flex-col items-center justify-center text-[10px] font-bold">
-                            <span className="text-indigo-600 uppercase">{date.toLocaleDateString('en-US', { month: 'short' })}</span>
-                            <span>{date.getDate()}</span>
+                        <div key={event.id} className="flex items-center justify-between group">
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-10 h-10 bg-slate-100 rounded-lg flex flex-col items-center justify-center text-[10px] font-bold">
+                              <span className="text-indigo-600 uppercase">{date.toLocaleDateString('en-US', { month: 'short' })}</span>
+                              <span>{date.getDate()}</span>
+                            </div>
+                            <div>
+                              <div className="font-medium text-sm">{event.title}</div>
+                              <div className="text-xs text-slate-500">{date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="font-medium text-sm">{event.title}</div>
-                            <div className="text-xs text-slate-500">{date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                          </div>
+                          <button 
+                            onClick={() => handleDeleteEvent(event.id)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-rose-500 transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
                       );
                     })}
@@ -322,15 +360,25 @@ export default function App() {
                 className="space-y-4"
               >
                 {data.tasks.map(task => (
-                  <div key={task.id} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                  <div key={task.id} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between group">
                     <div className="flex items-center gap-4">
-                      <button className="w-6 h-6 rounded-full border-2 border-slate-200 hover:border-indigo-500 transition-colors"></button>
+                      <button 
+                        onClick={() => handleToggleTask(task.id)}
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${task.status === "completed" ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-200 hover:border-indigo-500"}`}
+                      >
+                        {task.status === "completed" && <CheckSquare size={14} />}
+                      </button>
                       <div>
-                        <div className="font-medium">{task.title}</div>
+                        <div className={`font-medium ${task.status === "completed" ? "text-slate-400 line-through" : "text-slate-900"}`}>{task.title}</div>
                         <div className="text-xs text-slate-400 uppercase tracking-wider font-bold">{task.priority} Priority</div>
                       </div>
                     </div>
-                    <button className="text-slate-300 hover:text-rose-500 transition-colors"><Trash2 size={18} /></button>
+                    <button 
+                      onClick={() => handleDeleteTask(task.id)}
+                      className="text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 size={18} />
+                    </button>
                   </div>
                 ))}
               </motion.div>
@@ -604,6 +652,12 @@ export default function App() {
               >
                 {data.notes.map(note => (
                   <div key={note.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative group">
+                    <button 
+                      onClick={() => handleDeleteNote(note.id)}
+                      className="absolute top-4 right-4 text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                     <div className="text-slate-700 leading-relaxed mb-4">{note.content}</div>
                     <div className="flex flex-wrap gap-2">
                       {note.tags?.map(tag => (

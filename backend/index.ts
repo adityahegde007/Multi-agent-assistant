@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { db } from "./db/index.ts";
+import { Task, Event, Note, ProductivityData } from "../shared/types.ts";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ async function startServer() {
 
   // API Routes
   app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", version: "1.0.0" });
+    res.json({ status: "ok", version: "1.1.0" });
   });
 
   app.get("/manifest.json", (req, res) => {
@@ -27,40 +28,117 @@ async function startServer() {
   });
 
   app.get("/api/data", (req, res) => {
-    res.json(db.read());
+    try {
+      res.json(db.read());
+    } catch (error) {
+      console.error("Failed to read data:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   app.post("/api/tasks", (req, res) => {
-    const args = req.body;
-    const currentData = db.read();
-    const task = { id: Date.now().toString(), ...args, status: "pending" };
-    currentData.tasks.push(task);
-    db.write(currentData);
-    res.json(task);
+    try {
+      const args = req.body;
+      if (!args.title) return res.status(400).json({ error: "Title is required" });
+      
+      const currentData: ProductivityData = db.read();
+      const task: Task = { 
+        id: Date.now().toString(), 
+        status: "pending",
+        priority: "medium",
+        ...args 
+      };
+      currentData.tasks.push(task);
+      db.write(currentData);
+      res.json(task);
+    } catch (error) {
+      console.error("Failed to add task:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   app.post("/api/events", (req, res) => {
-    const args = req.body;
-    const currentData = db.read();
-    const event = { id: Date.now().toString(), ...args };
-    currentData.events.push(event);
-    db.write(currentData);
-    res.json(event);
+    try {
+      const args = req.body;
+      if (!args.title || !args.startTime) return res.status(400).json({ error: "Title and startTime are required" });
+
+      const currentData: ProductivityData = db.read();
+      const event: Event = { id: Date.now().toString(), ...args };
+      currentData.events.push(event);
+      db.write(currentData);
+      res.json(event);
+    } catch (error) {
+      console.error("Failed to add event:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   app.post("/api/notes", (req, res) => {
-    const args = req.body;
-    const currentData = db.read();
-    const note = { id: Date.now().toString(), ...args, createdAt: new Date().toISOString() };
-    currentData.notes.push(note);
-    db.write(currentData);
-    res.json(note);
+    try {
+      const args = req.body;
+      if (!args.content) return res.status(400).json({ error: "Content is required" });
+
+      const currentData: ProductivityData = db.read();
+      const note: Note = { 
+        id: Date.now().toString(), 
+        createdAt: new Date().toISOString(),
+        ...args 
+      };
+      currentData.notes.push(note);
+      db.write(currentData);
+      res.json(note);
+    } catch (error) {
+      console.error("Failed to add note:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   app.delete("/api/data", (req, res) => {
-    const emptyData = { tasks: [], events: [], notes: [] };
-    db.write(emptyData);
-    res.json({ status: "ok", message: "All data cleared" });
+    try {
+      const emptyData: ProductivityData = { tasks: [], events: [], notes: [] };
+      db.write(emptyData);
+      res.json({ status: "ok", message: "All data cleared" });
+    } catch (error) {
+      console.error("Failed to clear data:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  // Individual Delete Endpoints
+  app.delete("/api/tasks/:id", (req, res) => {
+    try {
+      const { id } = req.params;
+      const currentData: ProductivityData = db.read();
+      currentData.tasks = currentData.tasks.filter(t => t.id !== id);
+      db.write(currentData);
+      res.json({ status: "ok" });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  app.delete("/api/events/:id", (req, res) => {
+    try {
+      const { id } = req.params;
+      const currentData: ProductivityData = db.read();
+      currentData.events = currentData.events.filter(e => e.id !== id);
+      db.write(currentData);
+      res.json({ status: "ok" });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  app.delete("/api/notes/:id", (req, res) => {
+    try {
+      const { id } = req.params;
+      const currentData: ProductivityData = db.read();
+      currentData.notes = currentData.notes.filter(n => n.id !== id);
+      db.write(currentData);
+      res.json({ status: "ok" });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   // Vite middleware for development
