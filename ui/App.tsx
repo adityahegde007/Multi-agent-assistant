@@ -9,6 +9,9 @@ import {
   LayoutDashboard,
   MessageSquare,
   ChevronRight,
+  ChevronDown,
+  ChevronLeft,
+  RefreshCcw,
   Sparkles,
   Terminal
 } from "lucide-react";
@@ -163,14 +166,6 @@ export default function App() {
                     <div className="text-sm font-bold mb-1">Primary Orchestrator</div>
                     <div className="text-[10px] opacity-70 leading-relaxed">Agent Card (manifest.json) & Health API enabled for A2A discovery.</div>
                   </div>
-                  <div className="bg-emerald-600 p-4 rounded-2xl text-white shadow-lg shadow-emerald-100">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Terminal size={16} className="text-emerald-200" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">Track 2: MCP</span>
-                    </div>
-                    <div className="text-sm font-bold mb-1">MCP Sub-Agents</div>
-                    <div className="text-[10px] opacity-70 leading-relaxed">Separated reasoning from execution via standardized tool protocols.</div>
-                  </div>
                   <div className="bg-amber-600 p-4 rounded-2xl text-white shadow-lg shadow-amber-100">
                     <div className="flex items-center gap-2 mb-2">
                       <LayoutDashboard size={16} className="text-amber-200" />
@@ -178,6 +173,14 @@ export default function App() {
                     </div>
                     <div className="text-sm font-bold mb-1">Semantic Engine</div>
                     <div className="text-[10px] opacity-70 leading-relaxed">Gemini Embeddings enable concept-based retrieval of notes.</div>
+                  </div>
+                  <div className="bg-emerald-600 p-4 rounded-2xl text-white shadow-lg shadow-emerald-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Terminal size={16} className="text-emerald-200" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">Track 2: MCP</span>
+                    </div>
+                    <div className="text-sm font-bold mb-1">MCP Sub-Agents</div>
+                    <div className="text-[10px] opacity-70 leading-relaxed">Separated reasoning from execution via standardized tool protocols.</div>
                   </div>
                 </div>
 
@@ -191,7 +194,7 @@ export default function App() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Stats Summary */}
                 <button 
                   onClick={() => setActiveTab("tasks")}
@@ -337,77 +340,119 @@ export default function App() {
                       specialized sub-agents for domain execution, and the Model Context Protocol (MCP) for tool standardization.
                     </p>
 
-                    <div className="relative flex flex-col items-center gap-12 py-12">
-                      {/* User Input Node */}
-                      <div className="bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border-4 border-indigo-500/20">
-                        <MessageSquare className="text-indigo-400" />
-                        <div>
-                          <div className="text-[10px] uppercase font-bold tracking-widest text-indigo-400">Entry Point</div>
-                          <div className="font-bold">User Natural Language Request</div>
+                    <div className="relative flex flex-col items-center gap-16 py-12">
+                      {/* Step 1: User Input */}
+                      <div className="relative group">
+                        <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg">1</div>
+                        <div className="bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border-4 border-indigo-500/20 group-hover:scale-105 transition-transform">
+                          <MessageSquare className="text-indigo-400" />
+                          <div>
+                            <div className="text-[10px] uppercase font-bold tracking-widest text-indigo-400">User Intent</div>
+                            <div className="font-bold">Natural Language Request</div>
+                          </div>
+                        </div>
+                        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                          <div className="text-[8px] font-bold text-slate-400 mb-1">INPUT STREAM</div>
+                          <div className="w-0.5 h-12 bg-gradient-to-b from-slate-900 to-indigo-600"></div>
+                          <ChevronDown className="text-indigo-600 -mt-2" size={24} />
                         </div>
                       </div>
 
-                      <ChevronRight className="rotate-90 text-slate-300" size={32} />
-
-                      {/* Orchestrator Node */}
-                      <div className="bg-indigo-600 text-white p-6 rounded-3xl shadow-2xl w-full max-w-md border-4 border-white/20 relative">
-                        <div className="absolute -top-3 -right-3 bg-white text-indigo-600 px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-lg">Gemini 3 Flash</div>
-                        <div className="flex items-center gap-4 mb-4">
-                          <Sparkles className="text-indigo-200" />
-                          <div className="font-bold text-xl">Primary Orchestrator</div>
+                      {/* Step 2: Orchestrator */}
+                      <div className="relative group mt-4">
+                        <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg">2</div>
+                        <div className="bg-indigo-600 text-white p-6 rounded-3xl shadow-2xl w-full max-w-md border-4 border-white/20 relative group-hover:scale-105 transition-transform">
+                          <div className="absolute -top-3 -right-3 bg-white text-indigo-600 px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-lg">Gemini 3 Flash</div>
+                          <div className="flex items-center gap-4 mb-4">
+                            <Sparkles className="text-indigo-200" />
+                            <div className="font-bold text-xl">Primary Orchestrator</div>
+                          </div>
+                          <div className="space-y-2 text-sm opacity-90">
+                            <div className="bg-white/10 p-2 rounded-lg border border-white/10 flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 bg-white rounded-full"></div> Intent Analysis & Routing
+                            </div>
+                            <div className="bg-white/10 p-2 rounded-lg border border-white/10 flex items-center gap-2 font-bold text-indigo-100">
+                              <RefreshCcw size={12} className="animate-spin-slow" /> Multi-Turn Reasoning Loop
+                            </div>
+                          </div>
                         </div>
-                        <div className="space-y-2 text-sm opacity-90">
-                          <div className="bg-white/10 p-2 rounded-lg border border-white/10 flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div> Intent Analysis & Routing
-                          </div>
-                          <div className="bg-white/10 p-2 rounded-lg border border-white/10 flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div> Multi-Turn Tool Synthesis
-                          </div>
+                        
+                        {/* Control Flow Label */}
+                        <div className="absolute -left-32 top-1/2 -translate-y-1/2 text-right">
+                          <div className="text-[10px] font-black text-indigo-600 uppercase tracking-tighter">Control Flow</div>
+                          <div className="text-[8px] text-slate-400">Reasoning & Logic</div>
+                        </div>
+
+                        {/* Loop Arrow */}
+                        <div className="absolute -right-24 top-1/2 -translate-y-1/2 flex flex-col items-center opacity-40 group-hover:opacity-100 transition-opacity">
+                          <div className="text-[8px] font-bold text-indigo-600 uppercase mb-1">Feedback Loop</div>
+                          <div className="w-16 h-16 border-t-2 border-r-2 border-b-2 border-indigo-600 rounded-r-full"></div>
+                          <ChevronLeft className="text-indigo-600 -mt-2 rotate-180" size={16} />
                         </div>
                       </div>
 
-                      <div className="w-full max-w-4xl grid grid-cols-3 gap-8 relative">
-                        {/* Connecting Lines (Simplified) */}
+                      {/* Step 3: Sub-Agents (Parallel Execution) */}
+                      <div className="relative w-full max-w-5xl">
+                        <div className="absolute -left-12 top-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg z-20">3</div>
                         <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-full h-12 border-x-2 border-t-2 border-slate-200 rounded-t-3xl -z-10"></div>
                         
-                        {/* Sub-Agents */}
-                        {[
-                          { name: "TASK_AGENT", icon: <CheckSquare />, color: "bg-indigo-500", tools: ["add_task", "get_data"] },
-                          { name: "CALENDAR_AGENT", icon: <Calendar />, color: "bg-amber-500", tools: ["add_event", "get_data"] },
-                          { name: "KNOWLEDGE_AGENT", icon: <StickyNote />, color: "bg-emerald-500", tools: ["add_note", "semantic_search"] }
-                        ].map((agent, i) => (
-                          <div key={i} className="bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-lg hover:border-indigo-200 transition-all group">
-                            <div className={`w-10 h-10 ${agent.color} text-white rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                              {agent.icon}
+                        <div className="grid grid-cols-3 gap-8">
+                          {[
+                            { name: "TASK_AGENT", icon: <CheckSquare />, color: "bg-indigo-500", tools: ["add_task", "get_data"], desc: "State Management" },
+                            { name: "CALENDAR_AGENT", icon: <Calendar />, color: "bg-amber-500", tools: ["add_event", "get_data"], desc: "Temporal Logic" },
+                            { name: "KNOWLEDGE_AGENT", icon: <StickyNote />, color: "bg-emerald-500", tools: ["add_note", "semantic_search"], desc: "Vector Retrieval" }
+                          ].map((agent, i) => (
+                            <div key={i} className="bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-lg hover:border-indigo-200 transition-all group relative">
+                              <div className={`w-10 h-10 ${agent.color} text-white rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                                {agent.icon}
+                              </div>
+                              <div className="font-bold text-sm">{agent.name}</div>
+                              <div className="text-[10px] text-slate-400 mb-3">{agent.desc}</div>
+                              <div className="space-y-1.5">
+                                {agent.tools.map(tool => (
+                                  <div key={tool} className="text-[9px] font-mono bg-slate-50 text-slate-500 px-2 py-1 rounded flex items-center gap-1.5 border border-slate-100">
+                                    <div className="w-1 h-1 bg-indigo-400 rounded-full"></div> λ {tool}
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Connector to Infra */}
+                              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-0.5 h-12 bg-slate-100 group-hover:bg-indigo-200 transition-colors"></div>
                             </div>
-                            <div className="font-bold text-sm mb-3">{agent.name}</div>
-                            <div className="space-y-1.5">
-                              {agent.tools.map(tool => (
-                                <div key={tool} className="text-[9px] font-mono bg-slate-50 text-slate-500 px-2 py-1 rounded flex items-center gap-1.5">
-                                  <div className="w-1 h-1 bg-slate-300 rounded-full"></div> λ {tool}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
 
-                      <ChevronRight className="rotate-90 text-slate-300" size={32} />
-
-                      {/* Infrastructure Layer */}
-                      <div className="grid grid-cols-2 gap-8 w-full max-w-2xl">
-                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex items-center gap-4">
-                          <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100"><LayoutDashboard className="text-indigo-600" /></div>
+                      {/* MCP Callout - After Track 3 (Knowledge Agent) */}
+                      <div className="relative group mt-4">
+                        <div className="bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-3 border-2 border-white/20 group-hover:scale-105 transition-transform">
+                          <Terminal size={18} className="text-blue-200" />
                           <div>
-                            <div className="font-bold text-sm">Express Backend</div>
-                            <div className="text-[10px] text-slate-400 font-mono">REST API / JSON DB</div>
+                            <div className="text-[8px] uppercase font-bold tracking-widest text-blue-200">MCP Protocol</div>
+                            <div className="text-xs font-bold">Standardized Tool Execution Layer</div>
                           </div>
                         </div>
-                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex items-center gap-4">
-                          <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100"><Sparkles className="text-emerald-600" /></div>
+                        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                          <div className="text-[8px] font-bold text-slate-400 mb-1">DATA FLOW</div>
+                          <div className="w-0.5 h-12 bg-gradient-to-b from-blue-600 to-slate-400"></div>
+                          <ChevronDown className="text-slate-400 -mt-2" size={24} />
+                        </div>
+                      </div>
+
+                      {/* Step 4: Infrastructure & Data */}
+                      <div className="relative grid grid-cols-2 gap-8 w-full max-w-2xl mt-4">
+                        <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-400 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg">4</div>
+                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex items-center gap-4 hover:bg-white hover:border-indigo-200 transition-all group">
+                          <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-colors"><LayoutDashboard size={20} /></div>
                           <div>
-                            <div className="font-bold text-sm">Vector Engine</div>
-                            <div className="text-[10px] text-slate-400 font-mono">Gemini Embeddings 2</div>
+                            <div className="font-bold text-sm">Deterministic Core</div>
+                            <div className="text-[10px] text-slate-400 font-mono">Express / JSON DB</div>
+                          </div>
+                        </div>
+                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex items-center gap-4 hover:bg-white hover:border-emerald-200 transition-all group">
+                          <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:bg-emerald-600 group-hover:text-white transition-colors"><Sparkles size={20} /></div>
+                          <div>
+                            <div className="font-bold text-sm">Vector Search</div>
+                            <div className="text-[10px] text-slate-400 font-mono">Gemini Embeddings</div>
                           </div>
                         </div>
                       </div>
