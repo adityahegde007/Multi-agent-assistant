@@ -2,16 +2,17 @@
 
 **AgentFlow** is a sophisticated AI productivity system built for the **Google AI Hackathon**. It demonstrates a robust **Multi-Agent Architecture** that seamlessly integrates **ADK/A2A**, **Vector Search**, and **MCP** tracks into a single, production-ready application.
 
-## 🏆 Multi-Track Alignment
+## 🚀 Hackathon Track Alignment
 
 ### 1. Track 1: Agent Development Kit (ADK) & A2A
-- **Standardized Manifest**: Includes an `agent-card.json` (manifest) describing capabilities, making the system **Agent2Agent (A2A)** ready.
-- **Primary Orchestrator**: Implements a central reasoning agent (Gemini 3 Flash) that coordinates specialized sub-agent logic.
+- **Standardized Manifest**: Includes an `agent-card.json` (manifest) describing capabilities, making the system **Agent2Agent (A2A)** ready for discovery.
+- **Primary Orchestrator**: Implements a central reasoning agent using **Gemini 3 Flash** that coordinates specialized sub-agent logic.
 - **Production-Ready Backend**: Features a dedicated `/api/health` endpoint and structured API routes designed for serverless deployment on **Cloud Run**.
 
 ### 2. Track 3: AI-Enabled Data & Vector Search
 - **Semantic Retrieval (RAG)**: Implements **Semantic Search** over unstructured notes using **Gemini Embeddings** (`gemini-embedding-2-preview`).
 - **Conceptual Querying**: Users can query information using concepts rather than just keywords (e.g., *"Find my work-related notes"*).
+- **Hybrid Storage**: Combines a deterministic JSON database for state with a vector-based retrieval system for knowledge.
 
 ### 3. Track 2: Model Context Protocol (MCP)
 - **Separation of Reasoning & Execution**: Uses the **MCP Pattern** to decouple AI decision-making from deterministic tool execution.
@@ -40,6 +41,9 @@
 ```
 
 ## ⚙️ Setup & Installation
+
+> [!IMPORTANT]
+> **Gemini API Key Required**: This application requires a valid Gemini API key to function. The orchestrator uses `gemini-3-flash-preview` and the knowledge engine uses `gemini-embedding-2-preview`.
 
 1. **Environment Variables**:
    Set your `GEMINI_API_KEY` in your environment.

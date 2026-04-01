@@ -119,6 +119,14 @@ export default function App() {
 
   return (
     <div className="h-screen bg-slate-50 flex flex-col font-sans text-slate-900 overflow-hidden">
+      {/* API Key Warning Banner */}
+      {!orchestrator && (
+        <div className="bg-amber-500 text-white px-4 py-2 text-center text-xs font-bold flex items-center justify-center gap-2">
+          <Sparkles size={14} />
+          <span>Gemini API Key missing. AI features are disabled. Please set GEMINI_API_KEY in environment variables.</span>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         <main className="flex-1 flex flex-col overflow-hidden">
@@ -457,6 +465,32 @@ export default function App() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* Process Flow Section */}
+                <div className="bg-indigo-900 text-white p-8 rounded-3xl border border-indigo-800 shadow-xl overflow-hidden">
+                  <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
+                    <RefreshCcw className="text-indigo-400" /> Multi-Turn Reasoning Process Flow
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                    {[
+                      { step: "01", title: "Intent Parsing", desc: "Orchestrator identifies goals and required sub-agents." },
+                      { step: "02", title: "Tool Selection", desc: "Sub-agents select tools based on MCP definitions." },
+                      { step: "03", title: "Execution Loop", desc: "Tools are executed; results fed back for further reasoning." },
+                      { step: "04", title: "State Sync", desc: "Final state is persisted and UI is updated in real-time." }
+                    ].map((p, i) => (
+                      <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 relative">
+                        <div className="text-2xl font-black text-indigo-500/30 mb-2">{p.step}</div>
+                        <div className="font-bold text-sm mb-1">{p.title}</div>
+                        <div className="text-[10px] text-indigo-200/70 leading-relaxed">{p.desc}</div>
+                        {i < 3 && (
+                          <div className="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 z-20">
+                            <ChevronRight size={16} className="text-indigo-500" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
