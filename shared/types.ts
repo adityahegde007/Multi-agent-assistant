@@ -31,5 +31,5 @@ export interface ChatMessage {
   trace?: { agent: string; tool: string; args: any; result: string }[];
 }
 
-export const GEMINI_MODEL = "gemini-3-flash-preview";
+export const GEMINI_MODEL = "gemini-flash-latest";
 export const EMBEDDING_MODEL = "gemini-embedding-2-preview";
