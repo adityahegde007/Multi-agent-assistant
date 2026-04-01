@@ -24,7 +24,18 @@
 - **Timezone Awareness**: The system automatically detects the user's local timezone and instructs agents to schedule events with the correct UTC offset, ensuring perfect synchronization between the AI and the UI.
 - **Multi-Agent Orchestration**: A specialized routing layer analyzes user intent and invokes only the necessary agents (Task, Calendar, or Knowledge) to minimize latency and maximize accuracy.
 - **Interactive Architecture Diagram**: A built-in system design viewer that visualizes the control flow (Reasoning) and data flow (Execution) from user intent to data persistence.
+- **Mobile-Friendly UI**: Fully responsive dashboard and architecture visualization optimized for all screen sizes.
 - **MCP Protocol Layer**: A standardized middleware that translates high-level agent intents into low-level database operations.
+
+## 🗺️ System Architecture
+
+```mermaid
+graph TD
+    User([User Request]) --> Orchestrator[Primary Orchestrator<br/>Gemini 3 Flash]
+    Orchestrator <--> SubAgents[Specialized Sub-Agents<br/>Task, Calendar, Knowledge]
+    SubAgents --> MCP[MCP Protocol Layer]
+    MCP --> Infra[Infrastructure Layer<br/>Express, JSON DB, Vector Search]
+```
 
 ## 📂 Project Structure
 
@@ -63,6 +74,29 @@
 2. **Conflict Checking**: Try: *"Schedule a 'Design Review' for tomorrow at 10 AM. Do I have anything else going on then? If not, go ahead and schedule it."*
 3. **Semantic Search**: Try: *"Find my notes about project deadlines"* (even if the word 'deadline' isn't in the note, the semantic engine will find relevant content).
 4. **Architecture Verification**: Check the **Architecture** tab for the full system design and control flow visualization.
+
+## 📖 Documentation
+- [**Architecture Deep Dive**](./ARCHITECTURE.md): Technical design, control flow, and track alignment.
+- [**Deployment Guide**](./DEPLOYMENT.md): Instructions for Cloud Run and local setup.
+
+## ⚖️ Jury Quick Start: Example Conversations
+
+To experience the full reasoning power of AgentFlow, try these multi-turn conversations:
+
+### 1. Multi-Agent Coordination (Track 1 & 2)
+> **Prompt:** *"I need to finish the project proposal by Friday. Add it as a high priority task, and then schedule a 1-hour review meeting for this Thursday at 10 AM. Check if I'm free first!"*
+> 
+> **What to look for:** The agent will first add the task, then check your calendar for conflicts, and finally schedule the meeting—all in one go. Check the **MCP Tool Trace** to see the parallel agent execution.
+
+### 2. Semantic Reasoning & RAG (Track 3)
+> **Prompt:** *"Add a note: 'The secret code for the vault is 12345'. Then, a few minutes later, ask: 'What was that security information I saved earlier?'"*
+> 
+> **What to look for:** The agent will use **Vector Search** to find the note based on the *concept* of "security information," even though the word "security" wasn't in the original note.
+
+### 3. Conflict Resolution & Logic
+> **Prompt:** *"Schedule a 'Sync' for tomorrow at 3 PM. Oh wait, if I already have something at 3 PM, move the new sync to 4 PM instead."*
+> 
+> **What to look for:** The agent will perform a conditional check on your existing schedule before deciding which tool parameters to use.
 
 ---
 *Built for the Google AI Hackathon - Demonstrating the power of Multi-Agent Coordination, MCP, and Vector Search.*

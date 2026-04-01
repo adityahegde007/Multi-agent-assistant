@@ -53,6 +53,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "tasks" | "calendar" | "notes" | "architecture">("dashboard");
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const orchestrator = useMemo(() => {
@@ -118,7 +119,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen bg-slate-50 flex flex-col font-sans text-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 overflow-x-hidden">
       {/* API Key Warning Banner */}
       {!orchestrator && (
         <div className="bg-amber-500 text-white px-4 py-2 text-center text-xs font-bold flex items-center justify-center gap-2">
@@ -129,32 +130,40 @@ export default function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="bg-white border-b border-slate-200 p-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 mr-4">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+        <main className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <header className="bg-white border-b border-slate-200 p-4 flex items-center justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-2 mr-2 md:mr-4">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white flex-shrink-0">
                 <Sparkles size={18} />
               </div>
-              <h1 className="font-bold text-lg tracking-tight">AgentFlow</h1>
+              <h1 className="font-bold text-base md:text-lg tracking-tight hidden sm:block">AgentFlow</h1>
             </div>
             {activeTab !== "dashboard" && (
               <button 
                 onClick={() => setActiveTab("dashboard")}
-                className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium"
+                className="flex items-center gap-1 px-2 md:px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-xs md:text-sm font-medium"
               >
-                <LayoutDashboard size={16} /> Back to Dashboard
+                <LayoutDashboard size={14} className="md:w-4 md:h-4" /> <span className="hidden xs:inline">Dashboard</span>
               </button>
             )}
-            <h2 className="font-semibold text-lg capitalize border-l border-slate-200 pl-4">{activeTab}</h2>
+            <h2 className="font-semibold text-sm md:text-lg capitalize border-l border-slate-200 pl-2 md:pl-4 truncate max-w-[100px] sm:max-w-none">{activeTab}</h2>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-xs text-slate-400 font-mono uppercase tracking-widest">System Online</div>
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+          <div className="flex items-center gap-2 md:gap-3">
+            <button 
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              className="md:hidden p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
+            >
+              <MessageSquare size={18} />
+            </button>
+            <div className="hidden xs:flex items-center gap-2 md:gap-3">
+              <div className="text-[10px] text-slate-400 font-mono uppercase tracking-widest hidden lg:block">System Online</div>
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            </div>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <AnimatePresence mode="wait">
             {activeTab === "dashboard" && (
               <motion.div 
@@ -332,135 +341,135 @@ export default function App() {
                 key="architecture"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="space-y-8"
+                className="space-y-6 md:space-y-8"
               >
-                <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl overflow-hidden relative">
-                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                <div className="bg-white p-4 md:p-8 rounded-3xl border border-slate-200 shadow-xl overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-8 opacity-5 hidden sm:block">
                     <Terminal size={200} />
                   </div>
                   
                   <div className="relative z-10">
-                    <h3 className="text-2xl font-bold mb-2 flex items-center gap-3">
-                      <Terminal className="text-indigo-600" /> Multi-Agent Orchestration Architecture
+                    <h3 className="text-xl md:text-2xl font-bold mb-2 flex items-center gap-3">
+                      <Terminal className="text-indigo-600" size={24} /> <span className="truncate">Orchestration Architecture</span>
                     </h3>
-                    <p className="text-slate-500 mb-12 max-w-2xl">
+                    <p className="text-sm md:text-base text-slate-500 mb-8 md:mb-12 max-w-2xl">
                       A high-performance system leveraging Gemini 3 Flash for intelligent routing, 
                       specialized sub-agents for domain execution, and the Model Context Protocol (MCP) for tool standardization.
                     </p>
 
-                    <div className="relative flex flex-col items-center gap-16 py-12">
+                    <div className="relative flex flex-col items-center gap-12 md:gap-16 py-6 md:py-12">
                       {/* Step 1: User Input */}
-                      <div className="relative group">
-                        <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg">1</div>
-                        <div className="bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border-4 border-indigo-500/20 group-hover:scale-105 transition-transform">
-                          <MessageSquare className="text-indigo-400" />
+                      <div className="relative group w-full max-w-xs md:max-w-none flex justify-center">
+                        <div className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-[10px] md:text-xs border-2 border-white shadow-lg z-10">1</div>
+                        <div className="bg-slate-900 text-white px-4 md:px-8 py-3 md:py-4 rounded-2xl shadow-2xl flex items-center gap-3 md:gap-4 border-4 border-indigo-500/20 group-hover:scale-105 transition-transform w-full md:w-auto">
+                          <MessageSquare className="text-indigo-400" size={20} />
                           <div>
-                            <div className="text-[10px] uppercase font-bold tracking-widest text-indigo-400">User Intent</div>
-                            <div className="font-bold">Natural Language Request</div>
+                            <div className="text-[8px] md:text-[10px] uppercase font-bold tracking-widest text-indigo-400">User Intent</div>
+                            <div className="font-bold text-xs md:text-base">Natural Language Request</div>
                           </div>
                         </div>
-                        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                          <div className="text-[8px] font-bold text-slate-400 mb-1">INPUT STREAM</div>
-                          <div className="w-0.5 h-12 bg-gradient-to-b from-slate-900 to-indigo-600"></div>
-                          <ChevronDown className="text-indigo-600 -mt-2" size={24} />
+                        <div className="absolute -bottom-10 md:-bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                          <div className="text-[6px] md:text-[8px] font-bold text-slate-400 mb-1">INPUT STREAM</div>
+                          <div className="w-0.5 h-10 md:h-12 bg-gradient-to-b from-slate-900 to-indigo-600"></div>
+                          <ChevronDown className="text-indigo-600 -mt-2" size={20} />
                         </div>
                       </div>
 
                       {/* Step 2: Orchestrator */}
-                      <div className="relative group mt-4">
-                        <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg">2</div>
-                        <div className="bg-indigo-600 text-white p-6 rounded-3xl shadow-2xl w-full max-w-md border-4 border-white/20 relative group-hover:scale-105 transition-transform">
-                          <div className="absolute -top-3 -right-3 bg-white text-indigo-600 px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-lg">Gemini 3 Flash</div>
-                          <div className="flex items-center gap-4 mb-4">
-                            <Sparkles className="text-indigo-200" />
-                            <div className="font-bold text-xl">Primary Orchestrator</div>
+                      <div className="relative group mt-2 md:mt-4 w-full max-w-xs md:max-w-md flex justify-center">
+                        <div className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-[10px] md:text-xs border-2 border-white shadow-lg z-10">2</div>
+                        <div className="bg-indigo-600 text-white p-4 md:p-6 rounded-3xl shadow-2xl w-full border-4 border-white/20 relative group-hover:scale-105 transition-transform">
+                          <div className="absolute -top-3 -right-3 bg-white text-indigo-600 px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[10px] font-black uppercase shadow-lg">Gemini 3 Flash</div>
+                          <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                            <Sparkles className="text-indigo-200" size={20} />
+                            <div className="font-bold text-lg md:text-xl">Primary Orchestrator</div>
                           </div>
-                          <div className="space-y-2 text-sm opacity-90">
+                          <div className="space-y-2 text-xs md:text-sm opacity-90">
                             <div className="bg-white/10 p-2 rounded-lg border border-white/10 flex items-center gap-2">
                               <div className="w-1.5 h-1.5 bg-white rounded-full"></div> Intent Analysis & Routing
                             </div>
                             <div className="bg-white/10 p-2 rounded-lg border border-white/10 flex items-center gap-2 font-bold text-indigo-100">
-                              <RefreshCcw size={12} className="animate-spin-slow" /> Multi-Turn Reasoning Loop
+                              <RefreshCcw size={10} className="animate-spin-slow" /> Multi-Turn Reasoning Loop
                             </div>
                           </div>
                         </div>
                         
                         {/* Control Flow Label */}
-                        <div className="absolute -left-32 top-1/2 -translate-y-1/2 text-right">
-                          <div className="text-[10px] font-black text-indigo-600 uppercase tracking-tighter">Control Flow</div>
-                          <div className="text-[8px] text-slate-400">Reasoning & Logic</div>
+                        <div className="absolute -left-20 md:-left-32 top-1/2 -translate-y-1/2 text-right hidden xs:block">
+                          <div className="text-[8px] md:text-[10px] font-black text-indigo-600 uppercase tracking-tighter">Control Flow</div>
+                          <div className="text-[6px] md:text-[8px] text-slate-400">Reasoning & Logic</div>
                         </div>
 
                         {/* Loop Arrow */}
-                        <div className="absolute -right-24 top-1/2 -translate-y-1/2 flex flex-col items-center opacity-40 group-hover:opacity-100 transition-opacity">
-                          <div className="text-[8px] font-bold text-indigo-600 uppercase mb-1">Feedback Loop</div>
-                          <div className="w-16 h-16 border-t-2 border-r-2 border-b-2 border-indigo-600 rounded-r-full"></div>
-                          <ChevronLeft className="text-indigo-600 -mt-2 rotate-180" size={16} />
+                        <div className="absolute -right-16 md:-right-24 top-1/2 -translate-y-1/2 flex flex-col items-center opacity-40 group-hover:opacity-100 transition-opacity hidden sm:flex">
+                          <div className="text-[6px] md:text-[8px] font-bold text-indigo-600 uppercase mb-1">Feedback Loop</div>
+                          <div className="w-10 h-10 md:w-16 md:h-16 border-t-2 border-r-2 border-b-2 border-indigo-600 rounded-r-full"></div>
+                          <ChevronLeft className="text-indigo-600 -mt-2 rotate-180" size={12} md:size={16} />
                         </div>
                       </div>
 
                       {/* Step 3: Sub-Agents (Parallel Execution) */}
                       <div className="relative w-full max-w-5xl">
-                        <div className="absolute -left-12 top-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg z-20">3</div>
-                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-full h-12 border-x-2 border-t-2 border-slate-200 rounded-t-3xl -z-10"></div>
+                        <div className="absolute -left-4 md:-left-12 top-0 w-6 h-6 md:w-8 md:h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold text-[10px] md:text-xs border-2 border-white shadow-lg z-20">3</div>
+                        <div className="absolute -top-10 md:-top-12 left-1/2 -translate-x-1/2 w-full h-10 md:h-12 border-x-2 border-t-2 border-slate-200 rounded-t-3xl -z-10 hidden md:block"></div>
                         
-                        <div className="grid grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                           {[
                             { name: "TASK_AGENT", icon: <CheckSquare />, color: "bg-indigo-500", tools: ["add_task", "get_data"], desc: "State Management" },
                             { name: "CALENDAR_AGENT", icon: <Calendar />, color: "bg-amber-500", tools: ["add_event", "get_data"], desc: "Temporal Logic" },
                             { name: "KNOWLEDGE_AGENT", icon: <StickyNote />, color: "bg-emerald-500", tools: ["add_note", "semantic_search"], desc: "Vector Retrieval" }
                           ].map((agent, i) => (
-                            <div key={i} className="bg-white border-2 border-slate-100 rounded-2xl p-5 shadow-lg hover:border-indigo-200 transition-all group relative">
-                              <div className={`w-10 h-10 ${agent.color} text-white rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                                {agent.icon}
+                            <div key={i} className="bg-white border-2 border-slate-100 rounded-2xl p-4 md:p-5 shadow-lg hover:border-indigo-200 transition-all group relative">
+                              <div className={`w-8 h-8 md:w-10 md:h-10 ${agent.color} text-white rounded-xl flex items-center justify-center mb-3 md:mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                                {React.cloneElement(agent.icon as React.ReactElement, { size: 18 })}
                               </div>
-                              <div className="font-bold text-sm">{agent.name}</div>
-                              <div className="text-[10px] text-slate-400 mb-3">{agent.desc}</div>
-                              <div className="space-y-1.5">
+                              <div className="font-bold text-xs md:text-sm">{agent.name}</div>
+                              <div className="text-[8px] md:text-[10px] text-slate-400 mb-2 md:mb-3">{agent.desc}</div>
+                              <div className="space-y-1 md:space-y-1.5">
                                 {agent.tools.map(tool => (
-                                  <div key={tool} className="text-[9px] font-mono bg-slate-50 text-slate-500 px-2 py-1 rounded flex items-center gap-1.5 border border-slate-100">
+                                  <div key={tool} className="text-[8px] md:text-[9px] font-mono bg-slate-50 text-slate-500 px-2 py-1 rounded flex items-center gap-1 md:gap-1.5 border border-slate-100">
                                     <div className="w-1 h-1 bg-indigo-400 rounded-full"></div> λ {tool}
                                   </div>
                                 ))}
                               </div>
                               {/* Connector to Infra */}
-                              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-0.5 h-12 bg-slate-100 group-hover:bg-indigo-200 transition-colors"></div>
+                              <div className="absolute -bottom-8 md:-bottom-12 left-1/2 -translate-x-1/2 w-0.5 h-8 md:h-12 bg-slate-100 group-hover:bg-indigo-200 transition-colors hidden md:block"></div>
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* MCP Callout - After Track 3 (Knowledge Agent) */}
-                      <div className="relative group mt-4">
-                        <div className="bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-3 border-2 border-white/20 group-hover:scale-105 transition-transform">
+                      <div className="relative group mt-2 md:mt-4 w-full max-w-xs md:max-w-none flex justify-center">
+                        <div className="bg-blue-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-2xl shadow-xl flex items-center gap-2 md:gap-3 border-2 border-white/20 group-hover:scale-105 transition-transform w-full md:w-auto">
                           <Terminal size={18} className="text-blue-200" />
                           <div>
-                            <div className="text-[8px] uppercase font-bold tracking-widest text-blue-200">MCP Protocol</div>
-                            <div className="text-xs font-bold">Standardized Tool Execution Layer</div>
+                            <div className="text-[6px] md:text-[8px] uppercase font-bold tracking-widest text-blue-200">MCP Protocol</div>
+                            <div className="text-[10px] md:text-xs font-bold">Standardized Tool Execution Layer</div>
                           </div>
                         </div>
-                        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
-                          <div className="text-[8px] font-bold text-slate-400 mb-1">DATA FLOW</div>
-                          <div className="w-0.5 h-12 bg-gradient-to-b from-blue-600 to-slate-400"></div>
-                          <ChevronDown className="text-slate-400 -mt-2" size={24} />
+                        <div className="absolute -bottom-10 md:-bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                          <div className="text-[6px] md:text-[8px] font-bold text-slate-400 mb-1">DATA FLOW</div>
+                          <div className="w-0.5 h-10 md:h-12 bg-gradient-to-b from-blue-600 to-slate-400"></div>
+                          <ChevronDown className="text-slate-400 -mt-2" size={20} />
                         </div>
                       </div>
 
                       {/* Step 4: Infrastructure & Data */}
-                      <div className="relative grid grid-cols-2 gap-8 w-full max-w-2xl mt-4">
-                        <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-400 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-white shadow-lg">4</div>
-                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex items-center gap-4 hover:bg-white hover:border-indigo-200 transition-all group">
-                          <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-colors"><LayoutDashboard size={20} /></div>
+                      <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8 w-full max-w-2xl mt-2 md:mt-4">
+                        <div className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 bg-slate-400 text-white rounded-full flex items-center justify-center font-bold text-[10px] md:text-xs border-2 border-white shadow-lg z-10">4</div>
+                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-4 md:p-6 flex items-center gap-3 md:gap-4 hover:bg-white hover:border-indigo-200 transition-all group">
+                          <div className="p-2 md:p-3 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-colors"><LayoutDashboard size={18} /></div>
                           <div>
-                            <div className="font-bold text-sm">Deterministic Core</div>
-                            <div className="text-[10px] text-slate-400 font-mono">Express / JSON DB</div>
+                            <div className="font-bold text-xs md:text-sm">Deterministic Core</div>
+                            <div className="text-[8px] md:text-[10px] text-slate-400 font-mono">Express / JSON DB</div>
                           </div>
                         </div>
-                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex items-center gap-4 hover:bg-white hover:border-emerald-200 transition-all group">
-                          <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:bg-emerald-600 group-hover:text-white transition-colors"><Sparkles size={20} /></div>
+                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-4 md:p-6 flex items-center gap-3 md:gap-4 hover:bg-white hover:border-emerald-200 transition-all group">
+                          <div className="p-2 md:p-3 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:bg-emerald-600 group-hover:text-white transition-colors"><Sparkles size={18} /></div>
                           <div>
-                            <div className="font-bold text-sm">Vector Search</div>
-                            <div className="text-[10px] text-slate-400 font-mono">Gemini Embeddings</div>
+                            <div className="font-bold text-xs md:text-sm">Vector Search</div>
+                            <div className="text-[8px] md:text-[10px] text-slate-400 font-mono">Gemini Embeddings</div>
                           </div>
                         </div>
                       </div>
@@ -469,11 +478,11 @@ export default function App() {
                 </div>
 
                 {/* Process Flow Section */}
-                <div className="bg-indigo-900 text-white p-8 rounded-3xl border border-indigo-800 shadow-xl overflow-hidden">
-                  <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-                    <RefreshCcw className="text-indigo-400" /> Multi-Turn Reasoning Process Flow
+                <div className="bg-indigo-900 text-white p-6 md:p-8 rounded-3xl border border-indigo-800 shadow-xl overflow-hidden">
+                  <h3 className="text-lg md:text-xl font-bold mb-6 flex items-center gap-3">
+                    <RefreshCcw className="text-indigo-400" size={20} /> <span className="truncate">Reasoning Process Flow</span>
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 relative">
                     {[
                       { step: "01", title: "Intent Parsing", desc: "Orchestrator identifies goals and required sub-agents." },
                       { step: "02", title: "Tool Selection", desc: "Sub-agents select tools based on MCP definitions." },
@@ -481,9 +490,9 @@ export default function App() {
                       { step: "04", title: "State Sync", desc: "Final state is persisted and UI is updated in real-time." }
                     ].map((p, i) => (
                       <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 relative">
-                        <div className="text-2xl font-black text-indigo-500/30 mb-2">{p.step}</div>
-                        <div className="font-bold text-sm mb-1">{p.title}</div>
-                        <div className="text-[10px] text-indigo-200/70 leading-relaxed">{p.desc}</div>
+                        <div className="text-xl md:text-2xl font-black text-indigo-500/30 mb-2">{p.step}</div>
+                        <div className="font-bold text-xs md:text-sm mb-1">{p.title}</div>
+                        <div className="text-[9px] md:text-[10px] text-indigo-200/70 leading-relaxed">{p.desc}</div>
                         {i < 3 && (
                           <div className="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 z-20">
                             <ChevronRight size={16} className="text-indigo-500" />
@@ -541,12 +550,12 @@ export default function App() {
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-7 gap-2 mb-4">
+                <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="text-center text-xs font-bold text-slate-400 uppercase">{day}</div>
+                    <div key={day} className="text-center text-[10px] md:text-xs font-bold text-slate-400 uppercase">{day.slice(0, 3)}</div>
                   ))}
                 </div>
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1 md:gap-2">
                   {(() => {
                     const year = calendarDate.getFullYear();
                     const month = calendarDate.getMonth();
@@ -611,9 +620,17 @@ export default function App() {
       </main>
 
         {/* Chat Interface (Sidebar on desktop) */}
-        <aside className="w-full md:w-96 bg-white border-t md:border-t-0 md:border-l border-slate-200 flex flex-col h-[400px] md:h-full">
-          <div className="p-4 border-b border-slate-100 font-bold text-sm text-slate-400 uppercase tracking-widest flex items-center gap-2">
-            <MessageSquare size={16} className="text-indigo-600" /> AI Assistant
+        <aside className={`fixed inset-y-0 right-0 z-40 w-full sm:w-96 bg-white border-l border-slate-200 flex flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isChatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="p-4 border-b border-slate-100 font-bold text-sm text-slate-400 uppercase tracking-widest flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageSquare size={16} className="text-indigo-600" /> AI Assistant
+            </div>
+            <button 
+              onClick={() => setIsChatOpen(false)}
+              className="md:hidden p-1 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
             {messages.length === 0 && (
@@ -676,7 +693,7 @@ export default function App() {
             <div ref={chatEndRef} />
           </div>
 
-          <form onSubmit={handleSendMessage} className="relative">
+          <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-100 relative">
             <input
               type="text"
               value={input}
@@ -688,12 +705,20 @@ export default function App() {
             <button 
               type="submit"
               disabled={loading || !input.trim() || !orchestrator}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all disabled:opacity-50"
+              className="absolute right-6 top-1/2 -translate-y-1/2 p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all disabled:opacity-50"
             >
               <Send size={18} />
             </button>
           </form>
         </aside>
+
+        {/* Mobile Chat Overlay */}
+        {isChatOpen && (
+          <div 
+            className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-30 md:hidden"
+            onClick={() => setIsChatOpen(false)}
+          />
+        )}
       </div>
 
       {/* Custom Confirmation Modal */}
